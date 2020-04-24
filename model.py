@@ -110,4 +110,4 @@ prednowprednow(prediction_generator, model)
 prednowprednow(prediction_generator, model)
 
 
-print("\n\n\n\n\n\nYEAH BITCH")
+print("\n\n\n\n\n\nIM DONE")
