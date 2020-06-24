@@ -17,7 +17,7 @@ from fx import *
 import keras
 
 IMAGE_WIDTH, IMAGE_HEIGHT = 200, 200
-EPOCHS = 15
+EPOCHS = 30
 BATCH_SIZE = 32
 num_classes = 2
 '''
@@ -27,14 +27,20 @@ conda activate tf
 
 def create_model():
    model = Sequential()
-   model.add(Conv2D(64, (3, 3), padding='same', input_shape=(IMAGE_WIDTH, IMAGE_HEIGHT, 3), activation='relu', bias_regularizer=tf.keras.regularizers.l2(0.01), name = 'Conv_01'))
+   model.add(Conv2D(128, (3, 3), padding='same', input_shape=(IMAGE_WIDTH, IMAGE_HEIGHT, 3), activation='relu', bias_regularizer=tf.keras.regularizers.l2(0.01), name = 'Conv_01'))
    model.add(MaxPooling2D(pool_size=(2, 2), name = 'MaxPool_01'))
-   model.add(Conv2D(72, (3, 3), padding='same', activation='relu', bias_regularizer=tf.keras.regularizers.l2(0.01), name = 'Conv_02'))
+   model.add(Conv2D(96, (3, 3), padding='same', activation='relu', bias_regularizer=tf.keras.regularizers.l2(0.01), name = 'Conv_02'))
    model.add(MaxPooling2D(pool_size=(2, 2), name = 'MaxPool_02'))
+   model.add(Conv2D(64, (3, 3), padding='same', activation='relu', bias_regularizer=tf.keras.regularizers.l2(0.01), name = 'Conv_03'))
+   model.add(MaxPooling2D(pool_size=(2, 2), name = 'MaxPool_03'))
    model.add(Flatten(name = 'Flatten'))
    model.add(Dense(16, activation = 'relu', name = 'Dense_01'))
    model.add(Dense(2, activation='softmax', name = 'Output')) # 2 because of number of classes
    return model
+
+#savedmodel = "/savemodel/skinpred.hdf5"
+savedmodel = "/savemodel/skinpredv5.hdf5"
+# v4 sucks, use v5
 
 def lm():
     model = create_model()
@@ -43,15 +49,11 @@ def lm():
     checkpointer = ModelCheckpoint(filepath="/savemodel/skinpred.hdf5", verbose=1, save_best_only=True)
     return model
 
-def loadtrainedmodel(weights_path):
-    model = create_model()
-    model.load_weights(weights_path)
-
 model = lm()
 
 fpath = ""
-predlist = [fpath + "Melanoma.jpg", fpath + "Mole.jpg", fpath + "Skin.jpg", fpath + "Cancer.jpg"]
-prediction_df = pd.DataFrame({'filename': predlist, 'class': ["malignant", "benign", "benign", "malignant"]})
+predlist = [fpath + "Melanoma.jpg", fpath + "Mole.jpg", fpath + "Skin.jpg", fpath + "Cancer.jpg", fpath + "Skin2.jpg"]
+prediction_df = pd.DataFrame({'filename': predlist, 'class': ["malignant", "benign", "benign", "malignant", "benign"]})
 prediction_data_generator = ImageDataGenerator(rescale=1./255)
 prediction_generator = prediction_data_generator.flow_from_dataframe(prediction_df,
                                              target_size = (IMAGE_WIDTH, IMAGE_HEIGHT),
@@ -80,7 +82,7 @@ def pred_classify(datagen, pred_model):
     print(ps)
     print(pd.DataFrame({'Class Label': ['benign', 'malignant'], 'Probabilties': ps}))
 
-    if ps[0] > 0.6:
+    if ps[0] > 0.5:
         print("\nThis area of skin appears to be benign, but you should still check it out at the doctor's if you aren't sure!!")
         print(truncate(ps[0]*100, 1) + "% benign, " + truncate(ps[1]*100, 1) + "% malignant.")
     else:
@@ -96,7 +98,7 @@ def prednowprednow(datagen, pred_model):
     classes = ['benign', 'malignant']
     print('\n\nProbabilities:')
     print(ps)
-    if ps[0] > 0.6:
+    if ps[0] > 0.5:
         print("This area of skin appears to be benign, but you should still check it out at the doctor's if you aren't sure!!")
         print(truncate(ps[0]*100, 1) + "% benign, " + truncate(ps[1]*100, 1) + "% malignant.")
     else:
@@ -108,6 +110,7 @@ prednowprednow(prediction_generator, model)
 prednowprednow(prediction_generator, model)
 prednowprednow(prediction_generator, model)
 prednowprednow(prediction_generator, model)
+prednowprednow(prediction_generator, model)
 
 
-print("\n\n\n\n\n\nIM DONE")
+print("\nCODE COMPLETE")
