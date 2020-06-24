@@ -22,7 +22,7 @@ num_classes = 2
 
 savedmodel = "/savemodel/skinpredv5.hdf5"
 predimgpath = "Melanoma.jpg"
-fpath = ""
+fpath = "img/"
 
 '''
 conda create -n tf tensorflow
