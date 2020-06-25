@@ -21,7 +21,7 @@ BATCH_SIZE = 32
 num_classes = 2
 
 savedmodel = "/savemodel/skinpredv5.hdf5"
-predimgpath = "Melanoma.jpg"
+predimgpath = "BenignSkin.jpg"
 fpath = "img/"
 
 '''
@@ -68,11 +68,11 @@ def printPreds(predResult):
     # Converts prediction results into console log
     print('\nProbabilities:')
     if predResult[0] == 'b':
-        print("This area of skin appears to be benign, but you should still check it out at the doctor's if you aren't sure!!")
-        print(predResult[0] + "% benign, " + predResult[1] + "% malignant.")
+        print("This area of skin appears to be benign, but you should still check it out at the doctor's if you aren't sure!")
+        print("Your skin abnormality is", predResult[1] + "% benign, " + predResult[2] + "% malignant.")
     else:
         print("That's no ordinary abnormality, you should definitely check it out at the doctor's!")
-        print(predResult[0] + "% benign, " + predResult[1] + "% malignant.")
+        print(predResult[1] + "% benign, " + predResult[2] + "% malignant.")
 
 def returnPreds(datagen, pred_model):
     images, labels = datagen.next()
@@ -88,4 +88,4 @@ def returnPreds(datagen, pred_model):
 
 printPreds(returnPreds(makePredictionGen(), loadSkinModel()))
 
-print("\nPREDICTION COMPLETE")
+print("\nPREDICTION OF", predimgpath, "COMPLETE")
